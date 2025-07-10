@@ -1,1 +1,1 @@
-# SPN_param_recovery
+# SPN-param-recovery
