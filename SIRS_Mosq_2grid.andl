@@ -1,0 +1,207 @@
+spn  [Model_generated_by_BIOCHAM]
+{
+constants:
+compartment:
+  double compartment1 = 1.000000;
+  double compartment2 = 1.000000;
+parameter:
+  double sigma = 0.100000;
+  double muH = 0.010000;
+  double betaHM_1_1 = 0.300000;
+  double betaMH_1_1 = 0.400000;
+  double muM_1 = 0.020000;
+  double theta_SH_12 = 0.000351;
+  double theta_IH_12 = 0.000350;
+  double theta_RH_12 = 0.000349;
+  double alpha_SM_12 = 0.000349;
+  double alpha_IM_12 = 0.000346;
+  double betaHM_1_2 = 0.200000;
+  double betaMH_1_2 = 0.250000;
+  double betaHM_2_2 = 0.300000;
+  double betaMH_2_2 = 0.400000;
+  double muM_2 = 0.020000;
+  double theta_SH_21 = 0.000351;
+  double theta_IH_21 = 0.000350;
+  double theta_RH_21 = 0.000349;
+  double alpha_SM_21 = 0.000349;
+  double alpha_IM_21 = 0.000346;
+  double betaHM_2_1 = 0.200000;
+  double betaMH_2_1 = 0.250000;
+
+places:
+discrete:
+  SH1 = 4000.000000;
+  IH1 = 20.000000;
+  RH1 = 20.000000;
+  D_SH1 = 0.000000;
+  D_IH1 = 0.000000;
+  D_RH1 = 0.000000;
+  SM1 = 2000.000000;
+  IM1 = 10.000000;
+  D_SM1 = 0.000000;
+  D_IM1 = 0.000000;
+  SH2 = 4000.000000;
+  IH2 = 20.000000;
+  RH2 = 20.000000;
+  D_SH2 = 0.000000;
+  D_IH2 = 0.000000;
+  D_RH2 = 0.000000;
+  SM2 = 2000.000000;
+  IM2 = 10.000000;
+  D_SM2 = 0.000000;
+  D_IM2 = 0.000000;
+
+transitions:
+stochastic:
+  IH_1_RH
+    : 
+    : [IH1 - 1.000000] & [RH1 + 1.000000]
+    : MassAction(sigma)
+    ;
+  SH_1_IM
+    : 
+    : [SH1 - 1.000000] & [IM1 - 1.000000] & [IH1 + 1.000000] & [IM1 + 1.000000]
+    : MassAction(betaHM_1_1)
+    ;
+  RH_1
+    : 
+    : [RH1 - 1.000000] & [D_RH1 + 1.000000]
+    : MassAction(muH)
+    ;
+  SH_1
+    : 
+    : [SH1 - 1.000000] & [D_SH1 + 1.000000]
+    : MassAction(muH)
+    ;
+  IH_1
+    : 
+    : [IH1 - 1.000000] & [D_IH1 + 1.000000]
+    : MassAction(muH)
+    ;
+  SM_1_IH
+    : 
+    : [SM1 - 1.000000] & [IH1 - 1.000000] & [IM1 + 1.000000] & [IH1 + 1.000000]
+    : MassAction(betaMH_1_1)
+    ;
+  SM_1
+    : 
+    : [SM1 - 1.000000] & [D_SM1 + 1.000000]
+    : MassAction(muM_1)
+    ;
+  IM_1
+    : 
+    : [IM1 - 1.000000] & [D_IM1 + 1.000000]
+    : MassAction(muM_1)
+    ;
+  SH_1_2_SH
+    : 
+    : [SH1 - 1.000000] & [SH2 + 1.000000]
+    : MassAction(theta_SH_12)
+    ;
+  IH_1_2_IH
+    : 
+    : [IH1 - 1.000000] & [IH2 + 1.000000]
+    : MassAction(theta_IH_12)
+    ;
+  RH_1_2_RH
+    : 
+    : [RH1 - 1.000000] & [RH2 + 1.000000]
+    : MassAction(theta_RH_12)
+    ;
+  SM_1_2_SM
+    : 
+    : [SM1 - 1.000000] & [SM2 + 1.000000]
+    : MassAction(alpha_SM_12)
+    ;
+  IM_1_2_IM
+    : 
+    : [IM1 - 1.000000] & [IM2 + 1.000000]
+    : MassAction(alpha_IM_12)
+    ;
+  SH_1_2_IM
+    : 
+    : [SH1 - 1.000000] & [IM2 - 1.000000] & [IH1 + 1.000000] & [IM2 + 1.000000]
+    : MassAction(betaHM_1_2)
+    ;
+  SM_1_2_IH
+    : 
+    : [SM1 - 1.000000] & [IH2 - 1.000000] & [IM1 + 1.000000] & [IH2 + 1.000000]
+    : MassAction(betaMH_1_2)
+    ;
+  IH_2_RH
+    : 
+    : [IH2 - 1.000000] & [RH2 + 1.000000]
+    : MassAction(sigma)
+    ;
+  SH_2_IM
+    : 
+    : [SH2 - 1.000000] & [IM2 - 1.000000] & [IH2 + 1.000000] & [IM2 + 1.000000]
+    : MassAction(betaHM_2_2)
+    ;
+  RH_2
+    : 
+    : [RH2 - 1.000000] & [D_RH2 + 1.000000]
+    : MassAction(muH)
+    ;
+  SH_2
+    : 
+    : [SH2 - 1.000000] & [D_SH2 + 1.000000]
+    : MassAction(muH)
+    ;
+  IH_2
+    : 
+    : [IH2 - 1.000000] & [D_IH2 + 1.000000]
+    : MassAction(muH)
+    ;
+  SM_2_IH
+    : 
+    : [SM2 - 1.000000] & [IH2 - 1.000000] & [IM2 + 1.000000] & [IH2 + 1.000000]
+    : MassAction(betaMH_2_2)
+    ;
+  SM_2
+    : 
+    : [SM2 - 1.000000] & [D_SM2 + 1.000000]
+    : MassAction(muM_2)
+    ;
+  IM_2
+    : 
+    : [IM2 - 1.000000] & [D_IM2 + 1.000000]
+    : MassAction(muM_2)
+    ;
+  SH_2_1_SH
+    : 
+    : [SH2 - 1.000000] & [SH1 + 1.000000]
+    : MassAction(theta_SH_21)
+    ;
+  IH_2_1_IH
+    : 
+    : [IH2 - 1.000000] & [IH1 + 1.000000]
+    : MassAction(theta_IH_21)
+    ;
+  RH_2_1_RH
+    : 
+    : [RH2 - 1.000000] & [RH1 + 1.000000]
+    : MassAction(theta_RH_21)
+    ;
+  SM_2_1_SM
+    : 
+    : [SM2 - 1.000000] & [SM1 + 1.000000]
+    : MassAction(alpha_SM_21)
+    ;
+  IM_2_1_IM
+    : 
+    : [IM2 - 1.000000] & [IM1 + 1.000000]
+    : MassAction(alpha_IM_21)
+    ;
+  SH_2_1_IM
+    : 
+    : [SH2 - 1.000000] & [IM1 - 1.000000] & [IH2 + 1.000000] & [IM1 + 1.000000]
+    : MassAction(betaHM_2_1)
+    ;
+  SM_2_1_IH
+    : 
+    : [SM2 - 1.000000] & [IH1 - 1.000000] & [IM2 + 1.000000] & [IH1 + 1.000000]
+    : MassAction(betaMH_2_1)
+    ;
+
+}
