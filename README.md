@@ -16,5 +16,19 @@ A simple **neural-network-driven** method for **recovering** the coefficients of
 3. **Robust to Missing Events**  
    On SPN trajectories with 20 % randomly dropped events, our surrogate achieves an RMSE of 0.108 on rate coefficients, while running orders of magnitude faster than traditional MCMC.  
 
-## Simulation
-Simulation is dones in SPIKE (Chodak). The SPN model file is ....
+## Simulation and Training
+Simulation is done in SPIKE (Chodak). The SPN model file is in a `.andl` format and is run with the `.spc` configuration file. All these setup is embedded in the `Preprocess_Run_model_Simulation.ipynb` jupyter notebook. The only thing that needs to be changed in the jupyter notebooks are the file and folder paths. Everything else will run fine. However, since the model has been generated and converted to `.andl` format already. There is no need in running the create model cell.
+
+To train and evaluate the model, just run the `nn_model_train_eval.ipynb` notebook. Our simulation is quite expensive (although Spike implementation runs relatively faster), training the neural network model straightaway with our pre-simulated data will be more efficient except additional samples are needed.
+
+## Requirments
+
+- Python 3.10 or newer
+- This Spike version can only run on Windows
+
+Python Packages:
+- `numpy`, `pandas`, `matplotlib`
+- `geopandas`
+- `scipy`
+- `sklearn`
+- `torch`
