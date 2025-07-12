@@ -1,8 +1,5 @@
 # SPN-param-recovery
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/you/spn-neural-surrogate/ci.yml)]()
-[![License](https://img.shields.io/github/license/you/spn-neural-surrogate)]()
-
 A simple **neural-network-driven** method for **recovering** the coefficients of covariate-dependent transition-rate functions in Stochastic Petri Net (SPN) models directly from noisy, partially observed event trajectories, without ever computing an explicit likelihood.
 
 ## Core Ideas
