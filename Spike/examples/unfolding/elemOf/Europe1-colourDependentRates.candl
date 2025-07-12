@@ -1,0 +1,42 @@
+colspn  [Europe1_colourDependentRates]
+{
+constants:
+  
+all:
+  double k_connect = 0.01;
+  double k_connectFrequent = 0.5;
+  double k_connectRare = 0.05;
+
+colorsets:
+  Dot = {dot};
+  enum Nodes = {AT,BE,CH,DE,DK,ES,FR,IT,NL,PT};
+  Matrix = PROD(Nodes,Nodes);
+  Connections = Matrix[(x=PT&y=ES)|(x=ES&(y=PT|y=FR))|(x=FR&(y=ES|y=BE|y=DE|y=CH|y=IT))|(x=BE&(y=NL|y=DE|y=FR))|(x=NL&(y=BE|y=DE))|(x=CH&(y=FR|y=DE|y=AT|y=IT))|(x=AT&(y=DE|y=CH|y=IT))|(x=IT&(y=CH|y=AT|y=FR))|(x=DK&y=DE)|(x=DE&(y=DK|y=AT|y=CH|y=FR|y=BE|y=NL))];
+  FrequentConnections = Connections[(x=FR&(y=BE|y=DE|y=CH|y=IT))|(x=DE&(y=DK|y=AT|y=CH|y=FR|y=BE|y=NL))];
+
+variables:
+  Nodes : x;
+  Nodes : y;
+
+colorfunctions:
+bool  connected(Nodes p,Nodes q) { (p,q) elemOf Connections };
+bool  connectedFrequent(Nodes p,Nodes q) { (p,q) elemOf FrequentConnections };
+
+places:
+discrete:
+  Nodes node = 1`AT;
+
+transitions:
+  move
+ {[connected(x,y)]}
+    : 
+    : [node + {y}] & [node - {x}]
+    : [connectedFrequent(x,y)] MassAction(k_connectFrequent) ++ [!(connectedFrequent(x,y))] MassAction(k_connectRare)
+//    : [connectedFrequent(x,y)] MassAction(k_connect)
+//    : [!((x,y) elemOf FrequentConnections)] MassAction(k_connectRare)
+//    : [!((x,y) elemOf FrequentConnections && ((((((((((((x==PT)&&(y==ES))||((x==ES)&&((y==PT)||(y==FR))))||((x==FR)&&(((((y==ES)||(y==BE))||(y==DE))||(y==CH))||(y==IT))))||((x==BE)&&(((y==NL)||(y==DE))||(y==FR))))||((x==NL)&&((y==BE)||(y==DE))))||((x==CH)&&((((y==FR)||(y==DE))||(y==AT))||(y==IT))))||((x==AT)&&(((y==DE)||(y==CH))||(y==IT))))||((x==IT)&&(((y==CH)||(y==AT))||(y==FR))))||((x==DK)&&(y==DE)))||((x==DE)&&((((((y==DK)||(y==AT))||(y==CH))||(y==FR))||(y==BE))||(y==NL))))&&((x==FR)&&(y==BE))))] MassAction(k_connectRare)
+//    : [!( ((((((((((((x==PT)&&(y==ES))||((x==ES)&&((y==PT)||(y==FR))))||((x==FR)&&(((((y==ES)||(y==BE))||(y==DE))||(y==CH))||(y==IT))))||((x==BE)&&(((y==NL)||(y==DE))||(y==FR))))||((x==NL)&&((y==BE)||(y==DE))))||((x==CH)&&((((y==FR)||(y==DE))||(y==AT))||(y==IT))))||((x==AT)&&(((y==DE)||(y==CH))||(y==IT))))||((x==IT)&&(((y==CH)||(y==AT))||(y==FR))))||((x==DK)&&(y==DE)))||((x==DE)&&((((((y==DK)||(y==AT))||(y==CH))||(y==FR))||(y==BE))||(y==NL))))&&((x==FR)&&(y==BE))))] MassAction(k_connectRare)
+
+    ;
+
+}

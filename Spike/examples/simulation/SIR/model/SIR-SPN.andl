@@ -1,0 +1,28 @@
+spn  [SIR-SPN]
+{
+constants:
+all:
+  double k_infect_a = 5.0e-5;
+  double k_recover_a = 1.0e-1;
+
+places:
+discrete:
+  Infected_A = 1;
+  Recovered_A = 0;
+  SusceptiblePopulation_A = 50000;
+
+transitions:
+stochastic:
+  Infect_0
+    : 
+    : [Infected_A + 2] & [SusceptiblePopulation_A - 1] & [Infected_A - 1]
+    : MassAction(k_infect_a)
+    ;
+  Recover_0
+    : 
+    : [Recovered_A + 1] & [Infected_A - 1]
+    : MassAction(k_recover_a)
+    ;
+
+
+}

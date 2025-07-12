@@ -1,0 +1,39 @@
+colspn  [volterra]
+{
+constants:
+all:
+  double RR1 = 1;
+  double RR2 = 0.005;
+  double RR3 = 0.6;
+
+colorsets:
+  Dot = {dot};
+//  enum CS = {a..b};// invalid
+  enum CS = {a,b};
+
+variables:
+  CS : x;
+
+places:
+discrete:
+  CS Prey = 50`a++50`b;
+  CS Predator = 100`a++100`b;
+
+transitions:
+  prey_reproduction
+    : 
+    : [Prey + {2`x}] & [Prey - {x}]
+    : MassAction(RR1)
+    ;
+  prey_consumption
+    : 
+    : [Predator + {2`x}] & [Prey - {x}] & [Predator - {x}]
+    : MassAction(RR2)
+    ;
+  predator_death
+    : 
+    : [Predator - {x}]
+    : MassAction(RR3)
+    ;
+
+}

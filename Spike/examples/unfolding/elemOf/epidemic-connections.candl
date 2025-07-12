@@ -1,0 +1,38 @@
+colspn  [epidemic_connections]
+{
+colorsets:
+  Dot = {dot};
+// enum types allowed only to use basic types
+  enum Nodes = {A,B,C,D,E,F,G,H,I,J};
+  Matrix = PROD(Nodes,Nodes);
+// wrong
+//  Connections = Matrix[(x=A & (y=B || y=C || y=D || y=G || y=I)) || (x=B & (y=A || y=G || y=H || y=J)) || (x=C & (y=F || y=H))]; // x&y not used
+//  Connections = Matrix[(x=A && y=A)]; // x&y not used
+
+// correct
+//  Connections = Matrix[(a=A & (b=B || b=C || b=D || b=G || b=I)) || (a=B & (b=A || b=G || b=H || b=J)) || (a=C & (b=F || b=H))];
+  Connections = Matrix[(a=A & (b=B || b=C || b=D || b=G || b=I)) || (a=B & (b=A || b=G || b=H || b=J)) || (a=C & (b=F || b=H)) || (a=E && b=E) ];// a=E && b=E
+
+
+variables:
+  Nodes : x;
+  Nodes : y;
+  Nodes : a;
+  Nodes : b;
+
+colorfunctions:
+bool  IsInSpace(Nodes x1, Nodes y1) { (x1,y1) elemOf Connections };
+
+places:
+discrete:
+  Nodes node = 1`A;
+
+transitions:
+  move
+ {[IsInSpace(a,b)]}
+    : 
+    : [node + {b}] & [node - {a}]
+    : MassAction(1)
+    ;
+
+}

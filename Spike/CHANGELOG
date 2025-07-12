@@ -1,0 +1,283 @@
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## Types of changes
+
+- Added for new features.
+- Changed for changes in existing functionality.
+- Deprecated for soon-to-be removed features.
+- Removed for now removed features.
+- Fixed for any bug fixes.
+- Security in case of vulnerabilities.
+
+## [Unreleased 1.?.?]
+
+## [1.6.0-rc2]
+### Fixes
+- bugfix: branching over boolean values.
+- bugfix: evaluation of boolean operators precedence.
+- bugfix: sci num format, + is not mandatory after e.
+- bugfix: export only colured/uncolured places/transisions.
+
+## [1.6.0-rc1]
+### Added
+- Stepwise simulation e.g.:
+  
+  simulation: {
+    ...
+    onStep: {
+      ...
+      do: { ... }
+    }
+  }
+
+- Conditional blocks inside stepwise simulation e.g.:
+
+
+  onStep: {
+    ...
+    if(...) { ... } else if(...) { ... } else { ... }
+    ...
+    do: {
+      ...
+      if(...) { ... } else if(...) { ... } else { ... }
+      ...
+    }
+  }
+
+
+- Arithmetic expressions e.g.:
+
+  (1 + 2) * 3 / 4 
+
+- Boolean expressions e.g.:
+
+  true && false || !false
+ 
+- Possibility to set a seed for stochastic simulation.
+- Export single run of stochastic simulation e.g.:
+
+  // Stochastic simulation
+  stochastic: {
+    solver:
+    direct: {
+      threads: 1;
+      runs: 3;
+      seed: 2413805201;// If not present, set random seed
+    }
+    /*
+     *
+     */
+    single: true;// Single
+    //avg: false;// Default set ot true
+  }
+
+### Added
+- Support of boolean expressions and colour set in a colured PN (CANDL) e.g.:
+
+  colxpn  [boolean_control_flow_loop]
+  {
+  constants:
+      bool T = true;
+      bool F = false;
+
+  colorsets:
+    Dot = {dot};
+    Boolean = {true, false};
+
+  variables:
+    Boolean : x;
+    Boolean : y;
+
+  colorfunctions:
+
+  places:
+  discrete:
+    Boolean A = 1`true;
+    Boolean B = 1`true;
+
+    Dot X_T = 0`dot;
+    Dot X_F = 0`dot;
+    Dot Y_T = 0`dot;
+    Dot Y_F = 0`dot;
+
+  transitions:
+    if
+    {[x==T&&y]} 
+      : [A = {true}] & [B = {T}]
+      : [A - {[x&y](x)}] & [B - {y}] & [A + {false}] & [B + {false}] & [X_T + {dot}] & [Y_T + {dot}]
+      : [x&y]MassAction(1)
+      ;
+    else_if
+    {[!x&&!y]}
+      : [A = {x}] & [B = {y}]
+      : [A - {x}] & [B - {y}] & [A + {true}] & [B + {false}] & [X_F + {dot}] & [Y_F + {dot}]
+      : MassAction(2)
+      ;
+    else
+    {[!(x==T&&y)&&!(!x&&!y)]}
+      : [A = {x}] & [B = {y}]
+      : [A - {[!x](x)}] & [A + {[!x](!x)}] & [B - {[!y](y)}] & [B + {[!y](!y)}] & [X_T + {[x](dot)}] & [X_F + {[!x](dot)}] & [Y_T + {[y](dot)}] & [Y_F + {[!y](dot)}]
+      : [!x]MassAction(3)++[x]MassAction(4)
+      ;
+
+  }
+
+- Loading the andl/candl model from the given string.
+- Added to the configuration script possibility to select a global value set or for group of constants from an ANDL/CANDL model, e.g.:
+  ...
+  model: {
+    constants: {
+      ...
+      valueset: "ANDL-CANDL_SET_NAME";
+      ...
+      group1: {
+        valueset: "ANDL-CANDL_SET_NAME";
+      }
+    }
+  } 
+  ...
+
+- New guard expresion "elemOf" for colured PN, e.g.:
+
+  colcpn  [elemOf_test_cases]
+  {
+  constants:
+  all:
+    int D = 4;
+    int D1 = D;
+    int D2 = D;
+    int M = D/2;
+
+  colorsets:
+    CD1 = {1..D1};
+    CD2 = {1..D2};
+    CD3 = {3..5};
+    CDP = PROD(PROD(CD1, CD2), CD3);
+    HOLE = CDP [(a=1 || a=3) & (b=1 || b=3)];
+
+  variables:
+    CD1 : x;
+    CD2 : y;
+    CD3 : z;
+    CD1 : a;
+    CD2 : b;
+    CD3 : c;
+    HOLE : h;
+
+  colorfunctions:
+
+  bool IsInHole(CD1 a, CD2 b, CD3 c, CD1 x, CD2 y, CD3 z) {
+    ((a,b),c) elemOf HOLE && ((x,y),z) elemOf HOLE
+  };
+
+  bool IsInHoleABC(CD1 a, CD2 b, CD3 c) {
+    ((a,b),c) elemOf HOLE
+  };
+
+  bool IsInHoleXYZ(CD1 x, CD2 y, CD3 z) {
+    ((x,y),z) elemOf HOLE
+  };
+
+  bool IsInHoleABCXYZ(CD1 a, CD2 b, CD3 c, CD1 x, CD2 y, CD3 z) {
+    IsInHoleABC(a,b,c) && IsInHoleXYZ(x,y,z)
+  };
+
+
+  places:
+  continuous:
+    HOLE P = [(x=M & y=M & z=4)]1000`((x,y),z);
+
+  transitions:
+  continuous:
+    t3
+  //  {[((a,b),c+1) elemOf HOLE && ((x,y),z+1) elemOf HOLE]}
+  //  {[IsInHoleABC(a, b, c)]}
+  //  {[IsInHole(a, b, c, x, y, z)]}
+    {[IsInHoleABCXYZ(a, b, c, x, y, z)]}
+      : 
+      : [P + {[((a+3,b),c+1) elemOf HOLE] ((a,b),c)}] & [P - {((x,y),z)}]
+  //    : [P + {[IsInHoleABC(a+1, b, c) && a=3] ((a,b),c)}] & [P - {((x,y),z)}]
+  //    : [P + {[IsInHoleABC(a+1, b, c+1) && a=3] ((a,b),c)}] & [P - {((x,y),z)}]// c < 5
+  //    : [P + {[IsInHoleABC(a+2, b, c+1) && a=2] ((a,b),c)}] & [P - {((x,y),z)}]// empty because 2 is blocket by cs guard: CDP [(a=1 || a=3) & (b=1 || b=3)];
+  //    : [P + {[a+2 elemOf CD1]((a,b),c)}] & [P - {((x,y),z)}]
+
+      : [a+2 elemOf CD1]MassAction(0.1)++[!(a+2 elemOf CD1)]MassAction(0.5)// colour dependent rate
+      ;
+
+  }
+
+
+### Changed
+- Loading the model relative to the home directory of the configuration script.
+- From now on, slave processes retrieve the model from the broker.
+- Changed the branching operator from "[" (opne), "]" (close) to "[[" (open), "]]" (close)
+
+### Fixed
+- bugfix: loss of precision when saving to file.
+- bugfix: pruning constant places.
+- bugfix: executing Spike from the system path.
+- bugfix: specifying constants values in CLI.
+
+## [1.5.2]
+### Added
+- Configuration loading command (conf). Now it is possible to load the configuration
+  separately and execute it.
+- Added to the configuration script possibility to select a value set from an ANDL/CANDL model, e.g.:
+  ...
+  model: {
+    constants: {
+      ...
+      valueset: "ANDL-CANDL_SET_NAME";
+      ...
+    }
+  } 
+  ...
+
+- Auxiliary log definition, e.g.:
+  ...
+  log: {
+
+    simulation: configuration.simulation.name;
+    valueset: configuration.model.constants.valueset;
+
+    all_in_on_line: "simulation: " << configuration.simulation.name
+                    << " "
+                    << " valueset: " << configuration.model.constants.valueset;
+  }
+
+  log results e.g.:
+    ...
+    <NOTIFICATION> [TIME] [EVENT] [PID]:: REMOTE: 58: <NOTIFICATION> [TIME] [EVENT] [PID]:: log::simulation: SIMULATION_NAME
+    ...
+
+### Changed
+- More enhanced logging information about opening configuration script. 
+
+### Fixed
+- bugfix:IDD:unfolding coloured PN: unfolding of not consecutive set of integers.
+- bugfix:IDD:unfolding coloured PN: unfolding of non-overlapping ranges.
+
+## [1.4.4] - 2019-07-03
+### Fixed
+- bugfix: level of notification during execution command "prune" from ERROR to NOTIFICATION.
+- bugfix: execution of the commands chain in the CLI (Command Line Interface).
+- bugfix: importing & expoting to ERODE.
+
+### Changed
+- Grammar of CLI to: command -option=value | -option
+- Hiding some commands used for intermodule communication.
+- Commands / options description (help).
+
+## [1.4.3] - 2019-05-28
+### Added
+- Message on successful execution.
+- Selection of subprocesses creation strategy.
+- Catching execution termination by the user ^C.
+
+### Fixed
+- bugfix: typos in the logger: NOTIFICATION.
+- bugfix: crashing of logger when a tcp connection is closed.
+
+### Changed
+- Removed some debug messages.

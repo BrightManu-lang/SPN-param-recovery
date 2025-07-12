@@ -1,0 +1,101 @@
+colspn  [Europe1SIR]
+{
+constants:
+  valuesets[Main:V_Set_0:V_Set_1:V_Set_2:V_Set_3:V_Set_4]
+IR_weight:
+  int IR = [1:2:2:3:4:5];
+  int IR_1 = [IR+1:::::];
+infect_param:
+  double k_infect = [1.0e-6:1.0e-5:1.0e-4:1.0e-3:1.0e-2:1.0e-1];
+recover_param:
+  double k_recover = [1.0e-6:1.0e-5:1.0e-4:1.0e-3:1.0e-2:1.0e-1];
+connect_param:
+  double k_connect = [1.0e-6:1.0e-7:1.0e-8:1.0e-9:1.0e-10:1.0e-1]; 
+marking:
+  int V_m0AT = [9000:::::];
+  int V_m0BE = [11000:::::]; 
+  int V_m0CH = [8000:::::];
+  int V_m0DE = [83000:::::];     
+  int V_m0DK = [5000:::::];
+  int V_m0ES = [46000:::::]; 
+  int V_m0FR = [65000:::::];
+  int V_m0IT = [60000:::::];  
+  int V_m0NL = [17000:::::];
+  int V_m0PT = [10000:::::];
+  int fraction = [10:::::];
+  int I_m0AT = [V_m0AT/fraction:::::];
+  int I_m0BE = [0:::::]; 
+  int I_m0CH = [0:::::];
+  int I_m0DE = [0:::::];     
+  int I_m0DK = [0:::::];
+  int I_m0ES = [0:::::]; 
+  int I_m0FR = [0:::::];
+  int I_m0IT = [0:::::];  
+  int I_m0NL = [0:::::];
+  int I_m0PT = [0:::::];
+
+colorsets:
+  Dot = {dot};
+
+  // https://countrycode.org
+  enum Nodes = {AT,BE,CH,DE,DK,ES,FR,IT,NL,PT};
+
+  Matrix = PROD(Nodes,Nodes);
+
+  Connections = Matrix[
+    (x=PT & y=ES) |
+    (x=ES & (y=PT | y=FR)) |
+    (x=FR & (y=ES | y=BE | y=DE | y=CH | y=IT)) |
+    (x=BE & (y=NL | y=DE | y=FR)) |
+    (x=NL & (y=BE | y=DE)) |
+    (x=CH & (y=FR | y=DE | y=AT | y=IT)) |
+    (x=AT & (y=DE | y=CH | y=IT)) |
+    (x=IT & (y=CH | y=AT | y=FR)) |
+    (x=DK & y=DE) |
+    (x=DE & (y=DK | y=AT | y=CH | y=FR | y=BE | y=NL ))];
+
+variables:
+  Nodes : x;
+  Nodes : y;
+
+colorfunctions:
+bool  connected(Nodes p, Nodes q) { (p,q) elemOf Connections };
+
+places:
+discrete:
+  Nodes Infected = I_m0AT`AT ++ I_m0BE`BE ++ I_m0CH`CH ++ I_m0DE`DE ++ I_m0DK`DK ++ I_m0ES`ES ++ I_m0FR`FR ++ I_m0IT`IT ++ I_m0NL`NL ++ I_m0PT`PT;
+  Nodes VulnerablePopulation = V_m0AT`AT ++ V_m0BE`BE ++ V_m0CH`CH ++ V_m0DE`DE ++ V_m0DK`DK ++ V_m0ES`ES ++ V_m0FR`FR ++ V_m0IT`IT ++ V_m0NL`NL ++ V_m0PT`PT;
+  Nodes TotalInfectedOverTime = 0`all;
+  Nodes Recovered = 0`all;
+
+transitions:
+  Infect
+    : 
+    : [Infected + {IR_1`x}] & [TotalInfectedOverTime + {IR`x}] & [Infected - {1`x}] & [VulnerablePopulation - {IR`x}]
+    : MassAction(k_infect)
+    ;
+  Recover
+    : 
+    : [Recovered + {1`x}] & [Infected - {1`x}]
+    : MassAction(k_recover)
+    ;
+  ConnectionI
+ {[connected(x,y)]}
+    : 
+    : [Infected + {y}] & [Infected - {x}]
+    : MassAction(k_connect)
+    ;
+  ConnectionV
+ {[connected(x,y)]}
+    : 
+    : [VulnerablePopulation + {y}] & [VulnerablePopulation - {x}]
+    : MassAction(k_connect)
+    ;
+  ConnectionR
+ {[connected(x,y)]}
+    : 
+    : [Recovered + {y}] & [Recovered - {x}]
+    : MassAction(k_connect)
+    ;
+
+}

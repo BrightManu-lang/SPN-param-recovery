@@ -1,0 +1,77 @@
+  colcpn  [elemOf_test_cases]
+  {
+  constants:
+  all:
+    int D = 4;
+    int D1 = D;
+    int D2 = D;
+    int M = D/2;
+
+  colorsets:
+    CD1 = {1..D1};
+    CD2 = {1..D2};
+    CD3 = {3..5};
+    CDP = PROD(PROD(CD1, CD2), CD3);
+    HOLE = CDP [(a=1 || a=3) & (b=1 || b=3)];
+
+  variables:
+    CD1 : x;
+    CD2 : y;
+    CD3 : z;
+    CD1 : a;
+    CD2 : b;
+    CD3 : c;
+    HOLE : h;
+
+  colorfunctions:
+
+  bool IsInHole(CD1 a, CD2 b, CD3 c, CD1 x, CD2 y, CD3 z) {
+    ((a,b),c) elemOf HOLE && ((x,y),z) elemOf HOLE
+  };
+
+  bool IsInHoleABC(CD1 a, CD2 b, CD3 c) {
+    ((a,b),c) elemOf HOLE
+  };
+
+  bool IsInHoleXYZ(CD1 x, CD2 y, CD3 z) {
+    ((x,y),z) elemOf HOLE
+  };
+
+  bool IsInHoleABCXYZ(CD1 a, CD2 b, CD3 c, CD1 x, CD2 y, CD3 z) {
+    IsInHoleABC(a,b,c) && IsInHoleXYZ(x,y,z)
+  };
+
+
+  places:
+  continuous:
+    HOLE P = [(x=M & y=M & z=4)]1000`((x,y),z);
+
+  transitions:
+  continuous:
+    t3
+  //  {[((a,b),c+1) elemOf HOLE && ((x,y),z+1) elemOf HOLE]}
+  //  {[IsInHoleABC(a, b, c)]}
+  //  {[IsInHole(a, b, c, x, y, z)]}
+    {[IsInHoleABCXYZ(a, b, c, x, y, z)]}
+      : 
+      : [P + {[((a+3,b),c+1) elemOf HOLE] ((a,b),c)}] & [P - {((x,y),z)}]
+  //    : [P + {[IsInHoleABC(a+1, b, c) && a=3] ((a,b),c)}] & [P - {((x,y),z)}]
+  //    : [P + {[IsInHoleABC(a+1, b, c+1) && a=3] ((a,b),c)}] & [P - {((x,y),z)}]// c < 5
+  //    : [P + {[IsInHoleABC(a+2, b, c+1) && a=2] ((a,b),c)}] & [P - {((x,y),z)}]// empty because 2 is blocket by cs guard: CDP [(a=1 || a=3) & (b=1 || b=3)];
+  //    : [P + {[a+2 elemOf CD1]((a,b),c)}] & [P - {((x,y),z)}]
+
+//    : MassAction(0.1)
+//---
+// Colour dependent rate
+//---
+//    : [a>2]MassAction(0.1)
+//    : [IsInHoleABC(a, b, c)]MassAction(0.1)
+//    : [(!IsInHoleABC(a, b, c+1))]MassAction(0.5)
+//    : [IsInHoleABC(a, b, c)]MassAction(0.1)++[!(IsInHoleABC(a, b, c))]MassAction(0.5)
+//    : [(!IsInHoleABCXYZ(a, b, c+1, x, y, z))]MassAction(0.5)
+//    : [IsInHoleABC(a, b, c)]MassAction(0.1)++[a>1]MassAction(0.5)
+      : [a+2 elemOf CD1]MassAction(0.1)++[!(a+2 elemOf CD1)]MassAction(0.5)
+      ;
+
+  }
+
