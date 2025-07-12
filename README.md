@@ -8,10 +8,10 @@ A simple **neural-network-driven** method for **recovering** the coefficients of
 ## Core Ideas
 
 1. **Neural Posterior Approximation**  
-   We train a lightweight 1D Convolutional ResNet to map observed token trajectories (with dropout) → posterior over rate-law coefficients.  
+   We train a lightweight 1D Convolutional ResNet to map observed token trajectories (with dropout) -> posterior over transition-rate coefficients.  
 
 2. **Likelihood-Free & Fast**  
-   No expensive Bayesian sampling: inference is a single forward pass + Monte Carlo dropout for calibrated uncertainty bounds.  
+   No expensive Bayesian sampling: inference is a multi-stochastic forward pass with Monte Carlo dropout for calibrated uncertainty bounds.  
 
 3. **Robust to Missing Events**  
-   On SPNs with 20 % randomly dropped events, our surrogate achieves an RMSE of 0.108 on rate coefficients—while running orders of magnitude faster than traditional MCMC.  
+   On SPN trajectories with 20 % randomly dropped events, our surrogate achieves an RMSE of 0.108 on rate coefficients, while running orders of magnitude faster than traditional MCMC.  
