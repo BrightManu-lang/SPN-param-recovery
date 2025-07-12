@@ -7,12 +7,10 @@ A simple **neural-network-driven** method for **recovering** the coefficients of
 
 ## Core Ideas
 
-1. **Neural Posterior Approximation**  
-   We train a lightweight 1D Convolutional ResNet to map observed token trajectories (with dropout) -> posterior over transition-rate coefficients.  
-
+1. **Covariate-Dependent SPN parameter Posterior Approximation**  
+Introduce a framework for inferring the coefficients of transition-rate functions in SPNs that explicitly depend on external covariates—without ever computing the likelihood. We train a lightweight 1D Convolutional ResNet to map observed token trajectories (with dropout) to a posterior over transition-rate function coefficients.  
 2. **Likelihood-Free & Fast**  
    No expensive Bayesian sampling: inference is a multi-stochastic forward pass with Monte Carlo dropout for calibrated uncertainty bounds.  
-
 3. **Robust to Missing Events**  
    On SPN trajectories with 20 % randomly dropped events, our surrogate achieves an RMSE of 0.108 on rate coefficients, while running orders of magnitude faster than traditional MCMC.  
 
