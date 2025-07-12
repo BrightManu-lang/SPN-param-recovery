@@ -1,5 +1,0 @@
-# Unfolding
-
-PATH/TO/SPIKE load -f=elemOf-test-cases.candl unfold save -f=elemOf-test-cases.andl
-
-
