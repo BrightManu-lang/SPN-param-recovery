@@ -15,3 +15,6 @@ A simple **neural-network-driven** method for **recovering** the coefficients of
 
 3. **Robust to Missing Events**  
    On SPN trajectories with 20 % randomly dropped events, our surrogate achieves an RMSE of 0.108 on rate coefficients, while running orders of magnitude faster than traditional MCMC.  
+
+## Simulation
+Simulation is dones in SPIKE (Chodak). The SPN model file is ....
