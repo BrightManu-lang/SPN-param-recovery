@@ -1,0 +1,21 @@
+{
+  "seed": 42,
+  "dropout": 0.1,
+  "hidden_dim": 128,
+  "nblocks": 3,
+  "lr": 0.0001,
+  "coef_names": [
+    "lambda1_MH",
+    "lambda2_MH",
+    "gamma1_HM",
+    "gamma2_HM",
+    "delta1_MH",
+    "delta2_MH",
+    "eta1_HM",
+    "eta2_HM",
+    "p1_mortality",
+    "p2_mortality",
+    "iota1",
+    "iota2"
+  ]
+}
