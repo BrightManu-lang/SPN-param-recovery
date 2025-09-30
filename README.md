@@ -9,7 +9,7 @@ The entire simulation are run in parallel with `30` processes at a time. This en
 ## Training and Evaluation
 All source code for training and evaluating our neural surrogate model for dropout rates `0.1` and `0.2` are located in the `model_src` folder. First, create a python environment and install the required packages using the `requirements.txt` file. Use this command to run the model in terminal, `python run_model.py` for the default run. If you want to set your own arguments, use `python run_model.py --epochs 100 --batch-size 16 --dropouts 0.1 0.3 0.5 --seed 42`. For each dropout rate, the `model_src` contains the saved best model and scaler. One can call that directly without going through the full training procedure.
 
-We also provide a jupyter notebook that contains our hyperparamter tuning procedure in our quest to find the best dropout rate that could produce the best uncertainty calibration. Just open `model_dp_tune.py` run all to perform this procedure.
+We also provide a jupyter notebook that contains our hyperparamter tuning procedure in our quest to find the best dropout rate that could produce the best uncertainty calibration and further assess multiple stochastic forward passes. Just open `model_dp_tune.py` run all to perform this procedure.
 
 ## Requirments
 
