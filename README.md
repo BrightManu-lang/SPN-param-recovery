@@ -12,9 +12,11 @@ Introduce a framework for inferring the coefficients of transition-rate function
    On SPN trajectories with 20 % randomly dropped events, our surrogate achieves an RMSE of 0.108 on rate coefficients, while running orders of magnitude faster than traditional MCMC.  
 
 ## Simulation and Training
-Simulation is done in SPIKE (software by Chodak https://www-dssz.informatik.tu-cottbus.de/DSSZ/Software/Spike). The SPN model file is in a `.andl` format and is run with the `.spc` configuration file. All these setup is embedded in the `Preprocess_Run_model_Simulation.ipynb` jupyter notebook. The only thing that needs to be changed in the jupyter notebooks are the file and folder paths. Everything else will run fine. However, since the model has been generated and converted to `.andl` format already. There is no need in running the create model cell.
+Simulation is done in SPIKE (software by Chodak https://www-dssz.informatik.tu-cottbus.de/DSSZ/Software/Spike). The SPN model file is in a `.andl` format and is run with the `.spc` configuration file. All these setup is embedded in the `Run_simulation.py` file. The only things that need to be changed in the script are the file and folder paths. Everything else will run fine. However, since the model has been generated and converted to `.andl` format already. There is no need in running the create model cell. The entire simulation are run in parallel with `30` processes at a time. This ensured very efficient computations.
 
-To train and evaluate the neural surrogate model, just run the `nn_model_train_eval.ipynb` notebook. Our simulation is quite expensive (although Spike implementation runs relatively faster), training the neural network model straightaway with our pre-simulated data will be more efficient except additional samples are needed.
+All source code for training and evaluating our neural surrogate model for dropout rates `0.1` and `0.2` are located in the `model_src` folder. First, create a python environment and install the required packages using the `requirements.txt` file. Use this command to run the model in terminal, `python run_model.py` for the default run. If you want to set your own arguments, use `python run_model.py --epochs 100 --batch-size 16 --dropouts 0.1 0.3 0.5 --seed 42`. For each dropout rate, the `model_src` contains the saved best model and scaler. One can call that directly without going through the full training procedure.
+
+We also provide a jupyter notebook that contains our hyperparamter tuning procedure in our quest to find the best dropout rate that could produce the best uncertainty calibration. Just open 
 
 ## Requirments
 
