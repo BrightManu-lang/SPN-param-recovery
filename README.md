@@ -14,7 +14,7 @@ We also provide a jupyter notebook that contains our hyperparamter tuning proced
 ## Requirments
 
 - Python 3.10 or newer
-- This Spike version can only run on Windows (MacOs and Linux versions with instructions can be found on the Spike website)
+- This Spike version can only run on Windows (MacOs and Linux versions with instructions can be found on the SPIKE website)
 
 Python Packages:
 - `numpy`, `pandas`, `matplotlib`
